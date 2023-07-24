@@ -1,15 +1,8 @@
 import React from "react";
-import { Text } from "react-native";
-import { Link } from "expo-router";
+import ComprarBoletoComp from "../components/ComprarBoleto";
 
 const ComprarBoleto = () => {
-  return (
-    <>
-      <Link href={"/"}>
-        <Text>ComprarBoleto</Text>
-      </Link>
-    </>
-  );
+  return <ComprarBoletoComp></ComprarBoletoComp>;
 };
 
 export default ComprarBoleto;

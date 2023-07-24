@@ -1,23 +1,15 @@
 import React from "react";
-import {
-  View,
-  ScrollView,
-  SafeAreaView,
-  Alert,
-  Text,
-  Pressable,
-} from "react-native";
+import { View, ScrollView, SafeAreaView, Alert, Text } from "react-native";
 import { styles } from "./styles/safeArea";
 import { Card, Divider, FAB } from "@rneui/themed";
 import { Link, router } from "expo-router";
+import Header from "./Header";
 export default function MainApp() {
   //...//
   return (
     <SafeAreaView>
       <ScrollView>
-        <View className={"bg-red-200 p-2 py-3"}>
-          <Text className={"text-2xl"}>Venta de boletos de Avior</Text>
-        </View>
+        <Header></Header>
         <Card>
           <Card.Title>SELECCIONE UNA OPCION</Card.Title>
           <Card.Divider />
@@ -53,7 +45,7 @@ export default function MainApp() {
             <View className={"gap-2"}>
               <Text>Consultar Vuelos</Text>
               <FAB
-                onPress={() => router.push("/comprarBoleto")}
+                onPress={() => router.push("/consultarVuelos")}
                 icon={{ name: "airplanemode-active", color: "white" }}
                 color="red"
               />
