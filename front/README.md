@@ -1,2 +1,14 @@
-# react native transporte aereo
-  El transporte Aéreo necesita el desarrollo de una página web para el registro de ventas de boleto nacionales especificando todos los datos de seguridad y garantizando la compra a los usuarios por todos los medios de comunicación para su recibo.
+# Expo Router Example
+
+Use [`expo-router`](https://expo.github.io/router) to build native navigation using files in the `app/` directory.
+
+## 🚀 How to use
+
+```sh
+npx create-expo-app -e with-router
+```
+
+## 📝 Notes
+
+- [Expo Router: Docs](https://expo.github.io/router)
+- [Expo Router: Repo](https://github.com/expo/router)

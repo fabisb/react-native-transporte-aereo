@@ -1,36 +1,10 @@
 {
   "expo": {
-    "name": "transporte-aereo",
-    "slug": "transporte-aereo",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
-    },
+    "scheme": "acme",
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro"
     },
-    "extra": {
-      "eas": {
-        "projectId": "d9fb259b-cbee-45bd-9fe4-7dc2fb68423a"
-      }
-    },
-    "owner": "fabisb"
+    "name": "transporte-aereo",
+    "slug": "transporte-aereo"
   }
 }
