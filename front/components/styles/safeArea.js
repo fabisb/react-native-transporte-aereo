@@ -13,4 +13,19 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  //divider
+  horizontal: {
+    marginBottom: 10,
+  },
+  horizontalText: {
+    textAlign: 'center',
+    fontSize: 16,
+    marginVertical: 10,
+  },
+  vertical: {
+    marginBottom: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
 });
