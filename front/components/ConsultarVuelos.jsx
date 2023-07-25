@@ -5,13 +5,9 @@ import {
   SafeAreaView,
   Alert,
   Text,
-  Image,
-  Pressable,
   StyleSheet,
 } from "react-native";
-//import { styles } from "./styles/safeArea";
-import { Card, Divider, FAB } from "@rneui/themed";
-import { Link, router } from "expo-router";
+import { Card } from "@rneui/themed";
 import Header from "./Header";
 
 const vuelos = [
@@ -21,14 +17,14 @@ const vuelos = [
       {
         idVuelo: "220",
         vuelo: "Maracaibo - Caracas",
-        salida: "6:00",
-        llegada: "7:00",
+        salida: "06:00",
+        llegada: "07:00",
       },
       {
         idVuelo: "221",
         vuelo: "Caracas - Maracaibo",
-        salida: "7:00",
-        llegada: "8:00",
+        salida: "07:00",
+        llegada: "08:00",
       },
       {
         idVuelo: "224",
@@ -46,6 +42,23 @@ const vuelos = [
         vuelo: "Barquisimeto - Caracas",
         salida: "14:45",
         llegada: "15:30",
+      },
+    ],
+  },
+  {
+    ciudad: "Barcelona",
+    vuelos: [
+      {
+        idVuelo: "1410",
+        vuelo: "Caracas - Barcelona",
+        salida: "07:00",
+        llegada: "07:45",
+      },
+      {
+        idVuelo: "1411",
+        vuelo: "Barcelona - Caracas",
+        salida: "08:45",
+        llegada: "09:30",
       },
     ],
   },
@@ -69,7 +82,10 @@ function ConsultarVueloComp() {
                       <>
                         <Card.Divider />
                         <View key={i} style={styles.user}>
+                          <Text style={styles.name}>#{vuelo.idVuelo}</Text>
                           <Text style={styles.name}>{vuelo.vuelo}</Text>
+                          <Text style={styles.name}>{vuelo.salida}</Text>
+                          <Text style={styles.name}>{vuelo.llegada}</Text>
                         </View>
                       </>
                     );
@@ -102,7 +118,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    marginTop: 5,
+    marginTop: 1,
   },
 });
 
