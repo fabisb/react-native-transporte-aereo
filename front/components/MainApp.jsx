@@ -26,7 +26,7 @@ export default function MainApp() {
             <View className={"gap-2"}>
               <Text>Cancelar Boleto</Text>
               <FAB
-                onPress={() => router.push("/comprarBoleto")}
+                onPress={() => router.push("/cancelarBoleto")}
                 icon={{ name: "cancel", color: "white" }}
                 color="red"
               />
@@ -36,7 +36,7 @@ export default function MainApp() {
             <View className={"gap-2"}>
               <Text>Consultar un Boleto</Text>
               <FAB
-                onPress={() => router.push("/comprarBoleto")}
+                onPress={() => router.push("/consultarBoleto")}
                 icon={{ name: "search", color: "white" }}
                 color="red"
               />

@@ -8,9 +8,12 @@ import {
   Text,
   StyleSheet,
   Platform,
+  Pressable,
 } from "react-native";
 import { Button, Card, Dialog, Input } from "@rneui/themed";
 import Header from "./Header";
+import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const vuelos = [
   {
@@ -21,18 +24,21 @@ const vuelos = [
         vuelo: "Maracaibo - Caracas",
         salida: "06:00",
         llegada: "07:00",
+        precio: 180,
       },
       {
         idVuelo: "221",
         vuelo: "Caracas - Maracaibo",
         salida: "07:00",
         llegada: "08:00",
+        precio: 230,
       },
       {
         idVuelo: "224",
         vuelo: "Maracaibo - Caracas",
         salida: "16:00",
         llegada: "17:00",
+        precio: 180,
       },
     ],
   },
@@ -44,6 +50,7 @@ const vuelos = [
         vuelo: "Barquisimeto - Caracas",
         salida: "14:45",
         llegada: "15:30",
+        precio: 150,
       },
     ],
   },
@@ -55,25 +62,45 @@ const vuelos = [
         vuelo: "Caracas - Barcelona",
         salida: "07:00",
         llegada: "07:45",
+        precio: 130,
       },
       {
         idVuelo: "1411",
         vuelo: "Barcelona - Caracas",
         salida: "08:45",
         llegada: "09:30",
+        precio: 80,
       },
     ],
   },
 ];
 
 function ComprarBoletoComp() {
-  useEffect(() => {
-    //setVisible(!visible);
-  }, []);
   const [visible, setVisible] = useState(true);
   const [cedula, setCedula] = useState(0);
   const [nombre, setNombre] = useState("");
+
+  const getData = async (key) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem(key);
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch (e) {
+      console.log(e);
+      // error reading value
+    }
+  };
+  const storeData = async (value, key) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem(key, jsonValue);
+    } catch (e) {
+      console.log(e);
+      // saving error
+    }
+  };
   const ingresarDatos = () => {
+    console.log(nombre);
+    console.log(cedula);
     if (
       nombre === "" ||
       isNaN(cedula) ||
@@ -81,6 +108,7 @@ function ComprarBoletoComp() {
       !cedula ||
       cedula.toString().length !== 8
     ) {
+      console.log("if");
       if (Platform.OS === "web") {
         return alert(
           "Error al ingresar datos. Hubo un error al ingresar la cedula o nombre. Ingrese datos validos"
@@ -95,19 +123,74 @@ function ComprarBoletoComp() {
 
     setVisible(false);
   };
+  const handleNombreChange = (e) => setNombre(e);
+  const handleCedulaChange = (e) => setCedula(e);
+
+  const addCompra = async (id, vuelo, salida, llegada, precio) => {
+    const vuelosData = await getData(cedula);
+    console.log(vuelosData);
+    if (vuelosData) {
+      if (Platform.OS == "web") {
+        alert(
+          "ERROR AL REALIZAR COMPRA. Ya hay una compra realizada con esta cedula"
+        );
+        return router.push("/");
+      } else {
+        return Alert.alert(
+          "ERROR AL REALIZAR COMPRA",
+          "Ya hay una compra realizada con esta cedula",
+          [
+            {
+              text: "Inicio",
+              style: "cancel",
+              onPress: () => router.push("/"),
+            },
+          ]
+        );
+      }
+    }
+    await storeData(
+      {
+        user: { nombre, cedula },
+        vuelo: { id, vuelo, llegada, salida, precio },
+      },
+      cedula
+    );
+    if (Platform.OS == "web") {
+      alert(
+        "COMPRA REALIZADA CON EXITO. Puede consultar su compra en las opciones siguientes"
+      );
+      return router.push("/");
+    } else {
+      return Alert.alert(
+        "COMPRA REALIZADA CON EXITO",
+        "Puede consultar su compra en las opciones siguientes",
+        [
+          {
+            text: "Continuar",
+            style: "default",
+            onPress: () => router.push("/"),
+          },
+        ]
+      );
+    }
+  };
+
   return (
     <SafeAreaView>
       <ScrollView>
         <Header></Header>
         <Dialog isVisible={visible} fullScreen={true} ModalComponent={Modal}>
-          <Dialog.Title title="Informacion para la compra" />
-          <Text>Ingrese su nombre y numero de cedula.</Text>
+          <Dialog.Title
+            titleStyle={{ fontSize: 30 }}
+            title="Informacion para la compra"
+          />
+          <Text className={"text-2xl"}>
+            Ingrese su nombre y numero de cedula.
+          </Text>
+          <Input onChangeText={handleNombreChange} placeholder="Nombre"></Input>
           <Input
-            onChange={(e) => setNombre(e.target.value)}
-            placeholder="Nombre"
-          ></Input>
-          <Input
-            onChange={(e) => setCedula(e.target.value)}
+            onChangeText={handleCedulaChange}
             placeholder="Nro Cedula"
           ></Input>
           <Button
@@ -128,10 +211,22 @@ function ComprarBoletoComp() {
             }}
             onPress={ingresarDatos}
           />
+          <Button
+            title="REGRESAR"
+            titleStyle={{ fontWeight: "600" }}
+            buttonStyle={{
+              backgroundColor: "rgba(199, 43, 98, 1)",
+              borderColor: "transparent",
+              borderWidth: 0,
+              borderRadius: 30,
+              marginTop: 5,
+            }}
+            onPress={() => router.push("/")}
+          />
         </Dialog>
         <View>
           <Card>
-            <Card.Title>VUELOS DISPONIBLES</Card.Title>
+            <Card.Title>SELECCIONE PARA COMPRAR</Card.Title>
             <Card.Divider />
             {vuelos.map((ciudad, i) => {
               return (
@@ -140,18 +235,31 @@ function ComprarBoletoComp() {
                   {ciudad.vuelos.map((vuelo, i) => {
                     return (
                       <Card.Divider key={"vuelo" + i}>
-                        <View
-                          className={"gap-2 flex flex-wrap"}
-                          style={styles.user}
+                        <Pressable
+                          onPress={() =>
+                            addCompra(
+                              vuelo.idVuelo,
+                              vuelo.vuelo,
+                              vuelo.salida,
+                              vuelo.llegada,
+                              vuelo.precio
+                            )
+                          }
                         >
-                          <Text className={"font-bold"} style={styles.name}>
-                            #{vuelo.idVuelo}
-                          </Text>
-                          <Text style={styles.name}>{vuelo.vuelo}</Text>
-                          <Text style={styles.name}>{vuelo.salida}</Text>
-                          <Text>-</Text>
-                          <Text style={styles.name}>{vuelo.llegada}</Text>
-                        </View>
+                          <View
+                            className={"gap-2 flex flex-wrap"}
+                            style={styles.user}
+                          >
+                            <Text className={"font-bold"} style={styles.name}>
+                              #{vuelo.idVuelo}
+                            </Text>
+                            <Text style={styles.name}>{vuelo.vuelo}</Text>
+                            <Text style={styles.name}>{vuelo.salida}</Text>
+                            <Text>-</Text>
+                            <Text style={styles.name}>{vuelo.llegada}</Text>
+                            <Text style={styles.precio}>{vuelo.precio}$</Text>
+                          </View>
+                        </Pressable>
                       </Card.Divider>
                     );
                   })}
@@ -184,6 +292,11 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     marginTop: 1,
+  },
+  precio: {
+    fontSize: 15,
+    marginTop: 1,
+    fontWeight: "bold",
   },
 });
 
