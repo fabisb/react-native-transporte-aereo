@@ -10,10 +10,9 @@ import {
   Platform,
   Pressable,
 } from "react-native";
-import { Button, Card, Dialog, Divider, Input } from "@rneui/themed";
+import { Button, Card, Dialog, Input } from "@rneui/themed";
 import Header from "./Header";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { styles } from "./ConsultarVuelos";
 
 const InputForm = (props) => {
   const handleCedulaChange = props.handleCedulaChange;
@@ -44,7 +43,18 @@ const InputForm = (props) => {
     </>
   );
 };
+
 const ConsultaComp = ({ user }) => {
+  const removeValue = async (key) => {
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch (e) {
+      console.log(e);
+      // remove error
+    }
+
+    console.log("Done.");
+  };
   const getData = async (key) => {
     try {
       const jsonValue = await AsyncStorage.getItem(key);
@@ -63,23 +73,41 @@ const ConsultaComp = ({ user }) => {
       // saving error
     }
   };
+  const [verificacion, setVerificacion] = useState(false);
   const [userData, setUserData] = useState({});
   useEffect(() => {
     console.log("useEffect");
     const obtenerData = async () => {
       try {
         const data = await getData(user);
-        data != null
-          ? setUserData(data)
-          : Platform.OS != "web"
-          ? Alert.alert(
-              "No se a encontrado Boleto",
-              "El usuario que ha ingresado no tiene boletos comprados"
-            )
-          : alert(
-              "No se a encontrado Boleto",
-              "El usuario que ha ingresado no tiene boletos comprados"
-            );
+        setTimeout(async () => {
+          if (data) {
+            await setUserData(data);
+
+            await removeValue(data.user.cedula);
+
+            Platform.OS != "web"
+              ? Alert.alert(
+                  "Boleto eliminado",
+                  "El boleto que ha ingresado ha sido cancelado"
+                )
+              : alert(
+                  "Boleto eliminado",
+                  "El boleto que ha ingresado ha sido cancelado"
+                );
+            setVerificacion(true);
+          } else {
+            Platform.OS != "web"
+              ? Alert.alert(
+                  "No se a encontrado Boleto",
+                  "El usuario que ha ingresado no tiene boletos comprados"
+                )
+              : alert(
+                  "No se a encontrado Boleto",
+                  "El usuario que ha ingresado no tiene boletos comprados"
+                );
+          }
+        }, 1000);
       } catch (error) {
         console.log(error);
       }
@@ -89,37 +117,20 @@ const ConsultaComp = ({ user }) => {
 
   return (
     <>
-      {Object.entries(userData).length !== 0 ? (
+      {verificacion ? (
         <>
           <View className={"self-center"}>
-            <Text className={"text-2xl"}>
-              {userData.user.nombre} || {userData.user.cedula}
-            </Text>
-          </View>
-          <Divider></Divider>
-          <View className={"gap-2 my-2 flex flex-wrap"} style={styles.user}>
-            <Text className={"font-bold"} style={styles.name}>
-              #{userData.vuelo.id}
-            </Text>
-            <Text style={styles.name}>{userData.vuelo.vuelo}</Text>
-            <Divider orientation="vertical" width={2}></Divider>
-            <Text style={styles.name}>
-              Hora de salida: {userData.vuelo.salida}
-            </Text>
-            <Text style={styles.name}>
-              Hora de llegada: {userData.vuelo.llegada}
-            </Text>
-            <Text style={styles.precio}>Precio: {userData.vuelo.precio}$</Text>
+            <Text className={"text-2xl"}>Eliminado con exito</Text>
           </View>
         </>
       ) : (
-        <></>
+        <>...</>
       )}
     </>
   );
 };
 
-function ConsultarBoletoComp() {
+function CancelarBoletoComp() {
   const [user, setUser] = useState("");
   const [cedula, setCedula] = useState(0);
   const handleCedulaChange = (e) => setCedula(e);
@@ -132,6 +143,7 @@ function ConsultarBoletoComp() {
       !cedula ||
       cedula.toString().length !== 8
     ) {
+      console.log("if");
       if (Platform.OS === "web") {
         return alert(
           "Error al ingresar datos. Hubo un error al ingresar la cedula. Ingrese datos validos"
@@ -151,7 +163,7 @@ function ConsultarBoletoComp() {
         <Header></Header>
         <View>
           <Card>
-            <Card.Title>CONSULTAR BOLETO</Card.Title>
+            <Card.Title>CANCELAR BOLETO</Card.Title>
             <Card.Divider />
             {user == "" ? (
               <InputForm
@@ -168,4 +180,4 @@ function ConsultarBoletoComp() {
   );
 }
 
-export default ConsultarBoletoComp;
+export default CancelarBoletoComp;
