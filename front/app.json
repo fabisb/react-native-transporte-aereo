@@ -5,6 +5,15 @@
       "bundler": "metro"
     },
     "name": "transporte-aereo",
-    "slug": "transporte-aereo"
+    "slug": "transporte-aereo",
+    "extra": {
+      "eas": {
+        "projectId": "3abbe8be-4213-4af0-ba24-129bf1ceca63"
+      }
+    },
+    "owner": "fabisb",
+    "android": {
+      "package": "com.fabisb.transporteaereo"
+    }
   }
 }
